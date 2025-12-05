@@ -112,9 +112,9 @@ export type FSType = 'NODEFS' | 'WORKERFS' | 'IDBFS' | 'DRIVEFS';
 export type FSMountOptions<T extends FSType = FSType> =
   T extends 'DRIVEFS' ? { driveName?: string; browsingContextId?: string } :
   T extends 'NODEFS' ? { root: string } : {
-    blobs?: Array<{ name: string, data: Blob | ArrayBufferLike | Uint8Array }>;
+    blobs?: Array<{ name: string, data: Blob | Buffer | ArrayBufferLike | Uint8Array }>;
     files?: Array<File | FileList>;
-    packages?: Array<{ metadata: FSMetaData, blob: Blob | ArrayBufferLike | Uint8Array }>;
+    packages?: Array<{ metadata: FSMetaData, blob: Blob | Buffer | ArrayBufferLike | Uint8Array }>;
   };
 
 /**
@@ -486,18 +486,42 @@ export class WebR {
     return this.globalShelter.evalR(code, options);
   }
 
+  /**
+   * Evaluate the given R code, returning a promise for no return data.
+   * @param {string} code The R code to evaluate.
+   * @param {EvalROptions} [options] Options for the execution environment.
+   * @returns {Promise<void>} A promise which fires when the R code completes, but returns no data.
+   */
   async evalRVoid(code: string, options?: EvalROptions) {
     return this.evalRRaw(code, 'void', options);
   }
 
+  /**
+   * Evaluate the given R code, returning a promise for a boolean value. If the returned R value is not a boolean, an error will be thrown.
+   * @param {string} code The R code to evaluate.
+   * @param {EvalROptions} [options] Options for the execution environment.
+   * @returns {Promise<boolean>} The result of the computation.
+   */
   async evalRBoolean(code: string, options?: EvalROptions) {
     return this.evalRRaw(code, 'boolean', options);
   }
 
+  /**
+   * Evaluate the given R code, returning a promise for a number. If the returned R value is not a number, an error will be thrown.
+   * @param {string} code The R code to evaluate.
+   * @param {EvalROptions} [options] Options for the execution environment.
+   * @returns {Promise<number>} The result of the computation.
+   */
   async evalRNumber(code: string, options?: EvalROptions) {
     return this.evalRRaw(code, 'number', options);
   }
 
+  /**
+   * Evaluate the given R code, returning a promise for a string. If the returned R value is not a string, an error will be thrown.
+   * @param {string} code The R code to evaluate.
+   * @param {EvalROptions} [options] Options for the execution environment.
+   * @returns {Promise<string>} The result of the computation.
+   */
   async evalRString(code: string, options?: EvalROptions) {
     return this.evalRRaw(code, 'string', options);
   }
